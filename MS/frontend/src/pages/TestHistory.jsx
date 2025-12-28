@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import apiClient from '../config/axios';
 import { Link } from 'react-router-dom';
 
 const TestHistory = () => {
@@ -13,7 +13,7 @@ const TestHistory = () => {
 
   const fetchHistory = async () => {
     try {
-      const response = await axios.get('/api/tests/history');
+      const response = await apiClient.get('/api/tests/history');
       setTests(response.data);
     } catch (error) {
       setError('Tarixni yuklashda xatolik yuz berdi');

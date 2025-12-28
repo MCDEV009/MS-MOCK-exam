@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from '../config/axios';
 import { useAuth } from '../contexts/AuthContext';
 
 const CreateQuestion = () => {
@@ -21,7 +21,7 @@ const CreateQuestion = () => {
     setError('');
 
     try {
-      const response = await axios.post('/api/ai/generate-question', formData);
+      const response = await apiClient.post('/api/ai/generate-question', formData);
       setMessage('Savol muvaffaqiyatli yaratildi! Moderatsiyaga yuborildi.');
       setFormData({ language: 'uzbek', subject: '', topic: '', difficulty: 'medium' });
       

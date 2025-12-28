@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import apiClient from '../config/axios';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -13,7 +13,7 @@ const Dashboard = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await axios.get('/api/tests/history');
+      const response = await apiClient.get('/api/tests/history');
       const tests = response.data;
       const completedTests = tests.filter(t => t.status === 'completed');
       const avgScore = completedTests.length > 0

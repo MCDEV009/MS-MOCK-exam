@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import apiClient from '../config/axios';
 
 const TakeTest = () => {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ const TakeTest = () => {
     setLoading(true);
     setError('');
     try {
-      const response = await axios.post('/api/tests/start', testConfig);
+      const response = await apiClient.post('/api/tests/start', testConfig);
       setQuestions(response.data.questions);
       setTestId(response.data.testId);
       setTestStarted(true);
@@ -40,7 +40,7 @@ const TakeTest = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post(`/api/tests/${testId}/submit`, { answers });
+      const response = await apiClient.post(`/api/tests/${testId}/submit`, { answers });
       alert(`Test yakunlandi! Ballingiz: ${response.data.test.score} / ${response.data.test.maxScore}`);
       navigate('/test-history');
     } catch (error) {

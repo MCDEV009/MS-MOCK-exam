@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import apiClient from '../config/axios';
 import { useAuth } from '../contexts/AuthContext';
 
 const Payments = () => {
@@ -14,7 +14,7 @@ const Payments = () => {
 
   const fetchPackages = async () => {
     try {
-      const response = await axios.get('/api/payments/packages');
+      const response = await apiClient.get('/api/payments/packages');
       setPackages(response.data);
     } catch (error) {
       console.error('Paketlarni yuklashda xatolik:', error);
@@ -25,7 +25,7 @@ const Payments = () => {
 
   const handlePayment = async (packageId, provider = 'payme') => {
     try {
-      const response = await axios.post('/api/payments/init', {
+      const response = await apiClient.post('/api/payments/init', {
         package: packageId,
         provider
       });

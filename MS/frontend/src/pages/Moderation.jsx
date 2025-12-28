@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import apiClient from '../config/axios';
 
 const Moderation = () => {
   const [pendingQuestions, setPendingQuestions] = useState([]);
@@ -16,9 +16,9 @@ const Moderation = () => {
     setLoading(true);
     try {
       const [pendingRes, reportedRes, statsRes] = await Promise.all([
-        axios.get('/api/moderation/pending'),
-        axios.get('/api/moderation/reported'),
-        axios.get('/api/moderation/stats')
+        apiClient.get('/api/moderation/pending'),
+        apiClient.get('/api/moderation/reported'),
+        apiClient.get('/api/moderation/stats')
       ]);
       setPendingQuestions(pendingRes.data);
       setReportedQuestions(reportedRes.data);
@@ -32,7 +32,7 @@ const Moderation = () => {
 
   const handleApprove = async (id) => {
     try {
-      await axios.post(`/api/moderation/approve/${id}`);
+      await apiClient.post(`/api/moderation/approve/${id}`);
       fetchData();
     } catch (error) {
       alert('Tasdiqlashda xatolik');
@@ -44,7 +44,7 @@ const Moderation = () => {
       return;
     }
     try {
-      await axios.post(`/api/moderation/deactivate/${id}`);
+      await apiClient.post(`/api/moderation/deactivate/${id}`);
       fetchData();
     } catch (error) {
       alert('Deaktivlashtirishda xatolik');
