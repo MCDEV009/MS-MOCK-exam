@@ -9,9 +9,9 @@ dotenv.config();
 
 const router = express.Router();
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+const openai = process.env.OPENAI_API_KEY
+  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+  : null;
 
 // Generate question using AI
 router.post('/generate-question', authenticate, async (req, res) => {
@@ -25,7 +25,7 @@ router.post('/generate-question', authenticate, async (req, res) => {
     // Check quota
     const user = await User.findById(req.userId);
     if (user.usedQuota >= user.quota) {
-      return res.status(403).json({ 
+      return res.status(403).json({
         message: 'Kvota tugadi. Qo\'shimcha kvota olish uchun to\'lov qiling',
         quota: user.quota,
         usedQuota: user.usedQuota
@@ -74,6 +74,10 @@ Cheklovlar:
 - Takrorlanmasin
 - To'g'ri javob bitta bo'lsin`;
 
+    if (!openai) {
+      return res.status(500).json({ message: 'AI xizmati hozirda mavjud emas' });
+    }
+
     const completion = await openai.chat.completions.create({
       model: 'gpt-4',
       messages: [
@@ -92,14 +96,14 @@ Cheklovlar:
 
     const responseText = completion.choices[0].message.content.trim();
     let questionData;
-    
+
     // Try to parse JSON from response
     try {
       // Remove markdown code blocks if present
       const cleanText = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '');
       questionData = JSON.parse(cleanText);
     } catch (parseError) {
-      return res.status(500).json({ 
+      return res.status(500).json({
         message: 'AI javobini tahlil qilishda xatolik',
         error: responseText
       });
@@ -140,9 +144,9 @@ Cheklovlar:
     });
   } catch (error) {
     console.error('AI generation error:', error);
-    res.status(500).json({ 
-      message: 'AI savol yaratishda xatolik', 
-      error: error.message 
+    res.status(500).json({
+      message: 'AI savol yaratishda xatolik',
+      error: error.message
     });
   }
 });
