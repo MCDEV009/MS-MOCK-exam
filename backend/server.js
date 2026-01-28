@@ -21,9 +21,17 @@ app.use(cors());
 app.use(express.json());
 
 // Database connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/milliy_cert_mock')
+const mongoURI = process.env.MONGODB_URI || process.env.MONGO_URL || 'mongodb://localhost:27017/milliy_cert_mock';
+
+mongoose.connect(mongoURI)
   .then(() => console.log('✅ MongoDB ulandi'))
-  .catch(err => console.error('❌ MongoDB ulanish xatosi:', err));
+  .catch(err => {
+    console.error('❌ MongoDB ulanish xatosi:', err);
+    // Railway'da xatoni ko'rish uchun batafsil log
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('Ulanishga harakat qilingan URI:', mongoURI.replace(/\/\/.*@/, '//****:****@'));
+    }
+  });
 
 // Routes
 app.use('/api/auth', authRoutes);
